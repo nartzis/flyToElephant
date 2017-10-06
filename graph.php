@@ -206,6 +206,22 @@
 			}
 		}
 
+		/**
+		* Получение названий вершин графа
+		*
+		* @param int $pathArr - массив вершин для получения названий
+		* @return array Массив названий вершин графа
+		*/
+		public function getPathNames($pathArr){
+			$res = array();
+			if (is_array($pathArr)){
+				foreach($pathArr as $nodeKey){
+					$res[] = $this->nodes[$nodeKey]['name'];
+				}
+			}
+			return $res;
+		}
+
 	}
 
 ?>
