@@ -109,9 +109,10 @@
 					$path = array_merge($pathArr, array($link));
 					if ($link == $toWordKey){
 						$fullList = $path;
-						return true;
+						break;
 					} else {
 						$this->getAnyPath($fullList, $path, $link, $toWordKey);
+						if (count($fullList) > 0) break;
 					}
 				}
 			}
