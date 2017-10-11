@@ -36,7 +36,7 @@
 				foreach($uniqueNodes as $node){
 					if (mb_strlen($node, 'UTF-8') == $this->size){
 						$this->dict[$node] = $iter;
-						$this->nodes[] = array('name'=>$node, 'links'=>array());
+						$this->nodes[] = array('name'=>$node, 'links'=>array(), 'wave'=>0);
 						$iter++;
 					}
 				}
@@ -67,6 +67,17 @@
 						}
 					}
 				}
+			}
+		}
+
+		/**
+		* Процедура построения графа
+		*
+		* @return null
+		*/
+		private function buildGraph(){
+			foreach($this->nodes as $curNodeKey => $curNode){
+				$this->findLinks($curNode, $curNodeKey);
 			}
 		}
 
@@ -188,6 +199,89 @@
 		}
 
 		/**
+		* Процедура поиска кратчайшего пути в графе влновым алгоритмом
+		*
+		* @param array $fullList - путь в графе между вершинами
+		* @param array $pathArr - текущий путь в графе
+		* @param int $fromWordKey - индекс начального слова
+		* @param int $toWordKey - индекс конечного слова
+		* @return null
+		*/
+		private function makeWave($fromWordKey, $toWordKey){
+			foreach($this->nodes as $curNodeKey => $curNode){
+				$this->nodes[$curNodeKey]['wave'] = 0;
+			}
+			$this->findLinks($this->nodes[$fromWordKey], $fromWordKey);
+			$wave = 1;
+			$this->nodes[$fromWordKey]['wave'] = $wave;
+			$waveArr = $this->nodes[$fromWordKey]['links'];
+			while($this->nodes[$toWordKey]['wave'] == 0 && !empty($waveArr)){
+				$wave++;
+				$newWaveArr = array();
+				foreach($waveArr as $link){
+					if ($this->nodes[$link]['wave'] == 0){
+						$this->nodes[$link]['wave'] = $wave;
+						$this->findLinks($this->nodes[$link], $link);
+						$newWaveArr = array_unique(array_merge($newWaveArr, $this->nodes[$link]['links']), SORT_REGULAR);
+					}
+				}
+				$waveArr = $newWaveArr;
+			}
+			$res = false;
+			if ($this->nodes[$toWordKey]['wave'] > 0) $res = true;
+			return $res;
+		}
+
+		/**
+		* Процедура поиска кратчайшего пути в графе влновым алгоритмом
+		*
+		* @param array $fullList - путь в графе между вершинами
+		* @param array $pathArr - текущий путь в графе
+		* @param int $fromWordKey - индекс начального слова
+		* @param int $toWordKey - индекс конечного слова
+		* @return null
+		*/
+		private function getWavePath($fromWordKey, $toWordKey){
+			$path = array();
+			$path[] = $toWordKey;
+			$curKey = $toWordKey;
+			$wave = $this->nodes[$toWordKey]['wave'];
+			while($curKey != $fromWordKey && $wave > 0){
+				$wave--;
+				foreach($this->nodes[$curKey]['links'] as $levelKey){
+					if ($this->nodes[$levelKey]['wave'] == $wave){
+						$path[] = $levelKey;
+						$curKey = $levelKey;
+						break;
+					}
+				}
+			}
+			return array_reverse($path);
+		}
+
+		/**
+		* Поиск кратчайшего пути в графе влновым алгоритмом
+		*
+		* @param string $fromWord - начальное слово
+		* @param string $toWord - конечное слово
+		* @return mixed Массив вершин графа или сообщение об ошибке
+		*/
+		public function findShortestPathVaweAlgo($fromWord, $toWord){
+			$errMsg = $this->checkWords($fromWord, $toWord);
+			if ($errMsg){
+				return $errMsg;
+			} else {
+				$path = array();
+				if ($this->makeWave($this->dict[$fromWord], $this->dict[$toWord])){
+					$path = $this->getWavePath($this->dict[$fromWord], $this->dict[$toWord]);
+					return $path;
+				} else {
+					return 'Нет решений';
+				}
+			}
+		}
+
+		/**
 		* Печать пути в графе
 		*
 		* @param int $pathArr - массив вершин для печати
@@ -218,6 +312,34 @@
 				foreach($pathArr as $nodeKey){
 					$res[] = $this->nodes[$nodeKey]['name'];
 				}
+			}
+			return $res;
+		}
+
+		/**
+		* Оптимизация заданного пути, методом отсечения дуг
+		*
+		* @param int $pathArr - массив вершин для оптимизации
+		* @return array Массив оптимизированного пути
+		*/
+		public function optimizePath($pathArr){
+			$res = array();
+			if (is_array($pathArr)){
+				$cur = 1;
+				$prev = 0;
+				$max = count($pathArr)-1;
+				$res[] = $pathArr[0];
+				while($cur < $max){
+					// если предыдущий ссылается на следующего - текущий пропускаем
+					if (isset($pathArr[$prev]) && isset($pathArr[$cur]) &&isset($pathArr[$cur+1])){
+						if (!in_array($pathArr[$cur+1], $this->nodes[$pathArr[$prev]]['links'])){
+							$res[] = $pathArr[$cur];
+							$prev = $cur;
+						}
+						$cur++;
+					}
+				}
+				$res[] = $pathArr[$max];
 			}
 			return $res;
 		}

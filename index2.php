@@ -22,6 +22,12 @@
 
 	$graph->printPath($path);
 
+	// вывод оптимизированного пути
+	$opath = $graph->optimizePath($path);
+
+	$graph->printPath($opath);
+
+/*
 	// получаем новый словарь по первому пути
 	$newDict = $graph->getPathNames($path);
 
@@ -33,5 +39,6 @@
 	$path = $graph2->findShortestPath("муха", "слон");
 
 	$graph2->printPath($path);
+*/
 
 ?>
