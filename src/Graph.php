@@ -212,7 +212,7 @@
         }
 
         /**
-        * Процедура поиска кратчайшего пути в графе влновым алгоритмом
+        * Процедура поиска кратчайшего пути в графе волновым алгоритмом
         *
         * @param array $fullList - путь в графе между вершинами
         * @param array $pathArr - текущий путь в графе
@@ -249,7 +249,7 @@
         }
 
         /**
-        * Процедура поиска кратчайшего пути в графе влновым алгоритмом
+        * Процедура поиска кратчайшего пути в графе волновым алгоритмом
         *
         * @param array $fullList - путь в графе между вершинами
         * @param array $pathArr - текущий путь в графе
@@ -277,13 +277,13 @@
         }
 
         /**
-        * Поиск кратчайшего пути в графе влновым алгоритмом
+        * Поиск кратчайшего пути в графе волновым алгоритмом
         *
         * @param string $fromWord - начальное слово
         * @param string $toWord - конечное слово
         * @return mixed Массив вершин графа или сообщение об ошибке
         */
-        public function findShortestPathVaweAlgo($fromWord, $toWord)
+        public function findShortestPathWaveAlgo($fromWord, $toWord)
         {
             $errMsg = $this->checkWords($fromWord, $toWord);
             if ($errMsg) {

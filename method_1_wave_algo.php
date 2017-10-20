@@ -20,7 +20,7 @@
     $graph->loadNodes($dict);
 
     // поиск кратчайшего пути Волновым алгоритмом
-    $path = $graph->findShortestPathVaweAlgo("муха", "слон");
+    $path = $graph->findShortestPathWaveAlgo("муха", "слон");
 
     // вывод кратчайшего пути Волновым алгоритмом
     $graph->printPath($path);
