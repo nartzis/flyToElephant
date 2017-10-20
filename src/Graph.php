@@ -2,13 +2,13 @@
 
     namespace Nartzis;
 
-    class Graph
-    {
-        private $size;
+class Graph
+{
+    private $size;
 
-        private $nodes;
+    private $nodes;
 
-        private $dict;
+    private $dict;
 
         /**
         * Конструктор графа
@@ -366,4 +366,4 @@
             }
             return $res;
         }
-    }
+}
